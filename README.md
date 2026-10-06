@@ -2,6 +2,8 @@
 
 A browser strategy game for 2–8 players joining by room code. Each player runs an AI lab through six simultaneous rounds: bid, build, reveal, and upgrade. Guest sessions require no email, password, or installation.
 
+Competition requirements and the reasoning behind the multiplayer adaptation are documented in [COMPETITION.md](COMPETITION.md).
+
 ## Run locally
 
 Use Node.js 24+.
@@ -19,10 +21,10 @@ Practice creates two automated opponents. Bots use the same rules and authoritat
 
 ## Deploy to Vercel + Supabase
 
-The initial frontend and API deployment is hosted at https://neural-foundry-lab-wars.vercel.app. **Online multiplayer is not enabled yet** because the separate Supabase project has not been provisioned. The connected Supabase project cost-check endpoint remains unavailable. No existing OpenHour/Rushline data was modified.
+The initial frontend and API deployment is hosted at https://neural-foundry-lab-wars.vercel.app. **Online multiplayer is not enabled yet** while its guest-auth and Vercel environment setup is incomplete. The separate LabWars Supabase project has been provisioned and the game schema applied. No existing OpenHour/Rushline data was modified.
 
 1. Create a **separate standard Postgres Supabase project** in the selected FreeTime organization. Confirm its plan/cost in the provider before creating it.
-2. Apply the SQL file in `supabase/migrations/` once. It creates only `labwars_*` tables and service-only transactional functions. A local embedded Postgres test verifies its grants, RLS, membership visibility, and compare-and-swap behavior.
+2. Apply the SQL migrations in `supabase/migrations/` in filename order. It creates only `labwars_*` tables and service-only transactional functions. A local embedded Postgres test verifies its grants, RLS, membership visibility, and compare-and-swap behavior.
 3. Enable **Anonymous Sign-Ins** under Supabase Auth. Review signup rate limits and abuse protection before public promotion. This creates technical guest identities without a player login screen.
 4. Obtain the project's URL, publishable key, and **server-only secret key**. Set these Vercel environment variables:
 
@@ -89,4 +91,4 @@ Automated balance tests check all 18 briefs have achievable stretches and search
 
 ## Unverified production behavior
 
-The live Supabase Auth/Realtime integration and Vercel function deployment have not been exercised because provisioning is blocked. Local tests validate the engine and database schema, not cloud-service availability. The hosted frontend is reachable, but room creation and joining are unavailable until backend configuration is complete.
+The Vercel frontend and function respond online. The live Supabase Auth/Realtime integration has not yet been exercised end to end. Local tests validate the engine and database schema, not cloud-service availability. The hosted frontend is reachable, but room creation and joining are unavailable until backend configuration is complete.
