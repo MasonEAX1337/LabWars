@@ -29,14 +29,14 @@ Models and upgrades persist **within a match**. A rematch starts fresh. The long
 
 | Public mission expectation | Deliberate Lab Wars choice | Evidence and current limit |
 | --- | --- | --- |
-| A multiplayer game | 2–8 independent rival labs share one authoritative match. A limited accelerator auction connects their decisions. | Engine and API tests cover multiple players, concurrent submissions, and the eight-player cap. A local browser test uses separate desktop and phone sessions. Hosted end-to-end play remains to be verified. |
+| A multiplayer game | 2–8 independent rival labs share one authoritative match. A limited accelerator auction connects their decisions. | Engine and API tests cover multiple players, concurrent submissions, and the eight-player cap. A local browser test uses separate desktop and phone sessions. Hosted six-round desktop/phone play and an eight-player concurrent room also passed on October 6, 2026. |
 | Join by room code | One player creates a room. Others enter its six-character code and a lab name. Invite links can carry the code. | Lobby, membership checks, room capacity, and duplicate-name handling are implemented. |
-| No player login | Guest identities are created behind the scenes. Players provide no email or password. | Production uses Supabase anonymous sign-ins. This still creates a technical identity; it is not an account-registration screen. Anonymous sign-ins must be enabled and verified online. |
+| No player login | Guest identities are created behind the scenes. Players provide no email or password. | Production uses Supabase anonymous sign-ins. This still creates a technical identity; it is not an account-registration screen. Anonymous sign-ins are enabled and guest joining was verified online. |
 | No app installation | A React website runs in the browser instead of requiring the iOS app. | Vercel serves the frontend and API. No native download is part of joining. |
-| Keep screens synchronized | Server-controlled phases, deadlines, resources, and scores drive every client. Supabase revision notifications trigger snapshot refreshes, with polling recovery. | Atomic revision checks prevent concurrent requests from awarding results twice. Rival bids and pending builds are omitted from client snapshots. Live Realtime behavior is not yet verified. |
+| Keep screens synchronized | Server-controlled phases, deadlines, resources, and scores drive every client. Supabase revision notifications trigger snapshot refreshes, with polling recovery. | Atomic revision checks prevent concurrent requests from awarding results twice. Rival bids and pending builds are omitted from client snapshots. The hosted eight-player check received 13 Realtime updates. |
 | Play on phones or laptops | Responsive builder, compact cards, touch controls, and a shared room flow across screen sizes. | Desktop and 390-pixel phone browser tests cover a full local match, refresh, and rematch. Actual-device usability still needs human testing. |
-| Reusable and replayable | Six rounds end in a winner or shared win. The host can reset the room for a rematch. New rooms can be created independently. | Full-match and rematch tests pass. Repeated hosted sessions still need verification. |
-| Public playable URL | Frontend and API are hosted at [neural-foundry-lab-wars.vercel.app](https://neural-foundry-lab-wars.vercel.app). Durable state belongs in a separate Supabase project. | A reachable frontend is not sufficient. Database, guest auth, environment variables, and cross-device play must all work before this requirement is considered complete. |
+| Reusable and replayable | Six rounds end in a winner or shared win. The host can reset the room for a rematch. New rooms can be created independently. | Full-match and rematch tests pass. Hosted rematch behavior passed. Long-term availability still needs monitoring. |
+| Public playable URL | Frontend and API are hosted at [neural-foundry-lab-wars.vercel.app](https://neural-foundry-lab-wars.vercel.app). Durable state belongs in a separate Supabase project. | Database access, guest auth, production settings, and desktop/phone play have now been verified online. Ongoing availability still needs monitoring. |
 | Plan, approve, test, and iterate with ChatGPT Work | The owner chose Lab Wars, reviewed rules and scoring, approved the stack, and authorized implementation. Testing exposed a repeated-recipe scoring loophole that was revised. | The resulting source and test suite are public in [MasonEAX1337/LabWars](https://github.com/MasonEAX1337/LabWars). Preserve representative process screenshots for the submission if requested. |
 
 ## Judging criteria and our intended response
@@ -45,7 +45,7 @@ The official rubric gives each category **25%**. The following mapping is our in
 
 | Criterion | Design response | What must still be demonstrated |
 | --- | --- | --- |
-| Execution | Authoritative rules, atomic room updates, private submissions, timeout recovery, reconnect behavior, and rematches. | A stable hosted match with real guest sessions and working synchronization. Passing local tests alone does not establish this. |
+| Execution | Authoritative rules, atomic room updates, private submissions, timeout recovery, reconnect behavior, and rematches. | Hosted guest play, synchronization, concurrent scoring, and rematch checks passed. Longer observation and real-player sessions remain. |
 | Creativity | Rival AI labs combine company-building economics with changing deployment briefs and a scarce-compute auction. | Players should experience meaningful competition rather than several people solving isolated allocation puzzles. |
 | Usefulness / Value | Friends play a strategy game while discovering why data quality, efficiency, evaluation, and deployment context matter. | First-time players should understand the tradeoffs without an AI background and want another match. Educational intent does not prove learning or enjoyment. |
 | Polish & Thoughtfulness | Exact outcome previews, visible targets, failure explanations, readable reports, rotating auction tie priority, mobile controls, and recoverable missing submissions. | Human testing of clarity, pace, touch interaction, and disconnected-player behavior. |
@@ -69,10 +69,13 @@ Keeping computation simulated makes results predictable and avoids model-inferen
 ## Submission readiness gates
 
 - Confirm the signed-in mission instructions and entrant eligibility.
-- Finish configuring the separate LabWars Supabase project, anonymous auth, and Vercel environment variables.
-- Verify public access without a Vercel account and verify automatic GitHub deployment separately.
-- Complete hosted matches from independent devices, including reconnect, timeout, rematch, and an eight-player room.
-- Verify Realtime notifications and polling recovery without exposing pending bids or builds.
+- [x] Configure the separate LabWars Supabase project, anonymous auth, and production Vercel environment variables.
+- [x] Verify public access without a Vercel account.
+- [ ] Verify automatic GitHub deployment separately. Its team-scoped link operation still returns 403.
+- [x] Complete hosted matches in independent desktop/phone browser sessions, including refresh, upgrade purchase/use, rematch, and an eight-player API check.
+- [ ] Check physical devices and hosted timeout recovery with real players. Timeout behavior already passes engine tests.
+- [x] Verify hosted Realtime notifications and refresh recovery. Private projections are covered by engine/API tests.
+- [ ] Simulate loss of the Realtime connection to verify the polling fallback online.
 - Playtest with people unfamiliar with AI. Measure time to first successful build, total match duration, confusion, and willingness to rematch.
 - Investigate whether the final auction dominates outcomes and tune only with evidence.
 - Prepare a cover image and concise description. Submit the playable URL through the Handshake mission before the official deadline.

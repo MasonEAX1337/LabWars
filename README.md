@@ -21,7 +21,11 @@ Practice creates two automated opponents. Bots use the same rules and authoritat
 
 ## Deploy to Vercel + Supabase
 
-The initial frontend and API deployment is hosted at https://neural-foundry-lab-wars.vercel.app. **Online multiplayer is not enabled yet** while its guest-auth and Vercel environment setup is incomplete. The separate LabWars Supabase project has been provisioned and the game schema applied. No existing OpenHour/Rushline data was modified.
+**Play online:** https://neural-foundry-lab-wars.vercel.app
+
+Production uses the separate LabWars Supabase project. Guest sign-in, room creation/joining, a six-round desktop/phone match, reconnect, upgrade purchase/use, rematch, eight-player concurrent scoring, and Realtime updates were verified online on October 6, 2026. No existing OpenHour/Rushline data was modified.
+
+GitHub auto-deployment linking is still unverified: its Vercel team-scoped operation returns 403. The current production build was deployed from the tracked repository source. The instructions below also support a fresh installation.
 
 1. Create a **separate standard Postgres Supabase project** in the selected FreeTime organization. Confirm its plan/cost in the provider before creating it.
 2. Apply the SQL migrations in `supabase/migrations/` in filename order. It creates only `labwars_*` tables and service-only transactional functions. A local embedded Postgres test verifies its grants, RLS, membership visibility, and compare-and-swap behavior.
@@ -89,6 +93,15 @@ Round targets and stretch goals vary across all six rounds. The original repeate
 
 Automated balance tests check all 18 briefs have achievable stretches and search all fixed build recipes. This rules out the known loophole, but does not establish competitive balance or fun. Human playtesting is still needed, especially for research timing, rotating auction priority, and shared maximum-score ties.
 
-## Unverified production behavior
+## Hosted verification
 
-The Vercel frontend and function respond online. The live Supabase Auth/Realtime integration has not yet been exercised end to end. Local tests validate the engine and database schema, not cloud-service availability. The hosted frontend is reachable, but room creation and joining are unavailable until backend configuration is complete.
+The hosted browser test uses independent desktop and phone guest sessions and completes all six rounds, refreshes a locked submission, purchases and uses distillation, and returns to the lobby for a rematch. The hosted API check creates eight guests, joins one room, resolves simultaneous bids and builds, verifies four auction winners and one scored result per player, and observes Supabase Realtime updates. Both passed on October 6, 2026.
+
+```sh
+BASE_URL=https://neural-foundry-lab-wars.vercel.app npm run test:e2e
+BASE_URL=https://neural-foundry-lab-wars.vercel.app node scripts/check-live.mjs
+```
+
+The API check creates eight guest identities and a QA room. Run it deliberately against the intended environment. In environments that require an outbound proxy, set `PLAYWRIGHT_PROXY_URL` for the browser test and use Node's `--use-env-proxy` option for the API check. Use the environment's trusted certificate authority where required; do not disable TLS verification globally.
+
+These checks verify one hosted run, not long-term uptime, large-scale capacity, physical-device usability, or human enjoyment. Remaining work includes human playtesting and balancing, unattended room/user cleanup, rate-limit tuning for promotion, and resolving GitHub auto-deployment access.
